@@ -12,6 +12,7 @@ var Config = require('./config');
 var internals = {};
 
 
+
 Config.server.hipchatBotApi.uri = (Config.server.hipchatBotApi.tls ? 'https://' : 'http://') + Config.server.hipchatBotApi.host + ':' + Config.server.hipchatBotApi.port;
 
 var manifest = {
@@ -24,7 +25,7 @@ var manifest = {
     servers: [
         {
             host: Config.server.hipchatBotApi.host,
-            port: Config.server.hipchatBotApi.port,
+            port: process.env.PORT || Config.server.hipchatBotApi.port,
             options: {
                 labels: 'api',
                 cors: true
