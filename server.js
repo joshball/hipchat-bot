@@ -14,7 +14,7 @@ var hipchatBotApi = require(Path.join(__dirname, 'hipchatBotApi'));
 
 var internals = {};
 
-console.log('\n process.env:\n', JSON.stringify(process.env, undefined, 4));
+console.log('===================================== NEW RUN =====================================');
 
 var server = new Hapi.Server(~~process.env.PORT || 8112);
 
