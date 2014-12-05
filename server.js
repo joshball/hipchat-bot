@@ -19,7 +19,7 @@ var manifest = {
     pack: {
         app: {
             config: Config,
-            vault: Vault
+            //vault: Vault
         }
     },
     servers: [
