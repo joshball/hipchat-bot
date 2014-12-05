@@ -1,7 +1,7 @@
 'use strict';
 // Load modules
 
-var BluebirdPromise = require('Bluebird');
+var BluebirdPromise = require('bluebird');
 var Path = require('path');
 var Hapi = require('hapi');
 var Config = require('./config');
