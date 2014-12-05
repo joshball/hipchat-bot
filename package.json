@@ -1,0 +1,31 @@
+{
+  "name": "hipchat-bot",
+  "version": "1.0.0",
+  "description": "hipchat-bot\r ===========",
+  "main": "apiKey.do.not.check.in.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/joshball/hipchat-bot.git"
+  },
+  "author": "Joshua Ball <joshua.g.s.ball@gmail.com> (https://github.com/joshball/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/joshball/hipchat-bot/issues"
+  },
+  "homepage": "https://github.com/joshball/hipchat-bot",
+  "dependencies": {
+    "boom": "^2.6.1",
+    "hapi": "^7.5.2",
+    "hipchatter": "^0.1.3",
+    "hoek": "^2.10.0",
+    "joi": "^5.0.2",
+    "node-hipchat": "^0.4.5",
+    "request-promise": "^0.3.2"
+  },
+  "devDependencies": {
+    "nomnom": "^1.8.1"
+  }
+}
