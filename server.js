@@ -1,47 +1,53 @@
 'use strict';
 // Load modules
 
+var BluebirdPromise = require('Bluebird');
 var Path = require('path');
 var Hapi = require('hapi');
 var Config = require('./config');
 //var Vault = require('./secretEnvVars');
+var hapiHelpers = require('./hipchatBotApi/hapiHelpers');
 
+var hipchatBotApi = require(Path.join(__dirname, 'hipchatBotApi'));
 
 // Declare internals
 
 var internals = {};
 
+console.log('\n process.env:\n', JSON.stringify(process.env, undefined, 4));
 
+var server = new Hapi.Server(~~process.env.PORT || 8112);
 
-Config.server.hipchatBotApi.uri = (Config.server.hipchatBotApi.tls ? 'https://' : 'http://') + Config.server.hipchatBotApi.host + ':' + Config.server.hipchatBotApi.port;
+server.pack.app.config = Config;
 
-var manifest = {
-    pack: {
-        app: {
-            config: Config,
-            //vault: Vault
-        }
-    },
-    servers: [
-        {
-            host: Config.server.hipchatBotApi.host,
-            port: process.env.PORT || Config.server.hipchatBotApi.port,
-            options: {
-                labels: 'api',
-                cors: true
-            }
-        }
-    ],
-    plugins: {
-        './hipchatBotApi': [{ select: 'api', route: {prefix: '/hipchatBot/api'} }]
-    }
+BluebirdPromise.promisifyAll(server);
+BluebirdPromise.promisifyAll(server.pack);
+
+var hipchatBotApiOptions = {
+    labels: 'api',
+    cors: true
 };
 
-console.log('about to compose')
-Hapi.Pack.compose(manifest, { relativeTo: Path.join(__dirname) }, function (err, pack) {
+console.log('Registering plugins...');
 
-    console.log('hipchatBotApi: ', Config.server.hipchatBotApi.uri);
+return server.pack
+    //.registerAsync({plugin: hipchatBotApi, options: hipchatBotApiOptions}, {select: 'api', route: {prefix: '/hipchatBot/api'}})
+    .registerAsync({plugin: hipchatBotApi, options: hipchatBotApiOptions}, {route: {prefix: '/hipchatBot/api'}})
+    //.registerAsync({plugin: hipchatBotApi, options: hipchatBotApiOptions})
+    .then(function () {
+        console.log('Starting Server...');
+        return server.startAsync();
+    })
+    .then(function () {
+        hapiHelpers.dumpHapiRoutes(server);
+        console.log('Server Started! The party is on at: %s', server.info.uri);
+        return server;
+    })
+    .catch(function (error) {
+        console.error('createServer has an error!');
+        console.error(error);
+        console.error(error.stack);
+        throw error;
+    });
 
-    pack.start();
-});
 

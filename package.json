@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/joshball/hipchat-bot",
   "dependencies": {
+    "bluebird": "^2.3.11",
     "boom": "^2.6.1",
     "hapi": "^7.5.2",
     "hipchatter": "^0.1.3",
