@@ -23,6 +23,7 @@
     "hipchatter": "^0.1.3",
     "hoek": "^2.10.0",
     "joi": "^5.0.2",
+    "moment-timezone": "^0.2.5",
     "node-hipchat": "^0.4.5",
     "request-promise": "^0.3.2"
   },
