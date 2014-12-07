@@ -5,6 +5,7 @@
 //var Joi = require('joi');
 
 var LostCreekWeather = require('../plugins/LostCreekWeather');
+var utils = require('./utils');
 
 // Declare internals
 
@@ -29,13 +30,12 @@ exports.getInfo = {
 
 // Change profile properties
 
-Bluebird.promisifyAll(utils.HC);
 
 var handleMessage = function(item, message){
-    if(message === 'wx') {
-
-        return Current.ip()
-            .then(Current.showString)
+    //if(message === 'wx') {
+    //
+        return LostCreekWeather.current.ip()
+            .then(LostCreekWeather.current.showString)
             .then(function(msgString){
                 var roomId = item.room.id;
                 var params = {
@@ -62,7 +62,7 @@ var handleMessage = function(item, message){
                 console.log('ALL DONE', r);
             });
 
-    }
+    //}
 };
 
 exports.post = {
@@ -77,8 +77,8 @@ exports.post = {
     handler: function (request, reply) {
 
         console.log('\n\nPOST: room/event');
-        console.log('\nrequest.query:\n', JSON.stringify(request.query, undefined, 4));
         console.log('\nrequest.payload:\n', JSON.stringify(request.payload, undefined, 4));
+        console.log('\nrequest.query:\n', JSON.stringify(request.query, undefined, 4));
         console.log('\nrequest.headers:\n', JSON.stringify(request.headers, undefined, 4));
         var event = request.payload.event,
             item = request.payload.item,
@@ -104,11 +104,16 @@ exports.post = {
             }
             var messages = split.filter(Boolean).map(function(msg){return msg.trim();});
 
-            messages.forEach(function(msg){
-                handleMessage(item, msg);
-            })
+            // todo handle lots messages.
+            console.log('MESSAGES:', messages);
+            handleMessage(item, messages[0])
+                .then(function(result){
+                    console.log('done', result)
+                    reply({result: 'unhandled'});
+                });
         }
-
-        reply({success: true});
+        else {
+            reply({result: 'unhandled'});
+        }
     }
 };
