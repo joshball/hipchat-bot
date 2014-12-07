@@ -4,6 +4,7 @@
 //var Boom = require('boom');
 //var Joi = require('joi');
 
+var LostCreekWeather = require('../plugins/LostCreekWeather');
 
 // Declare internals
 
@@ -28,6 +29,42 @@ exports.getInfo = {
 
 // Change profile properties
 
+Bluebird.promisifyAll(utils.HC);
+
+var handleMessage = function(item, message){
+    if(message === 'wx') {
+
+        return Current.ip()
+            .then(Current.showString)
+            .then(function(msgString){
+                var roomId = item.room.id;
+                var params = {
+                    room: roomId,
+                    from: 'Da Bot',
+                    message: msgString,
+                    color: 'yellow'
+                };
+
+                console.log('Posting to Room:', roomId);
+                return utils.HC.postMessageAsync(params)
+                    .then(function(r){
+                        console.log('ALL DONE', r);
+                    })
+                    .catch(function(e){
+                        if(e.status == 'sent'){
+                            return
+                        }
+                        console.log('postMessageAsync.fail', e);
+                        return;
+                    });
+            })
+            .then(function(r){
+                console.log('ALL DONE', r);
+            });
+
+    }
+};
+
 exports.post = {
     //validate: {
     //    payload: {
@@ -48,10 +85,29 @@ exports.post = {
             oauth_client_id = request.payload.oauth_client_id,
             webhook_id = request.payload.webhook_id;
 
-        //console.log('event: ',event);
-        //console.log('item: ',JSON.stringify(item, undefined, 4));
-        //console.log('oauth_client_id: ',oauth_client_id);
-        //console.log('webhook_id: ',webhook_id);
+        if(event === 'room_message'){
+            var msg = item.message;
+            var room = item.room;
+            var user = msg.from;
+            var mentions = msg.mentions;
+            var message = msg.message;
+            var type = msg.type;
+            var split = message.toLowerCase().split('!bot');
+
+            if(split.length == 0){
+                console.log('Why is this split only returning 0:', msg, split);
+                return;
+            }
+            if(split.length == 1){
+                console.log('Why is this split only returning 1:', msg, split);
+                return;
+            }
+            var messages = split.filter(Boolean).map(function(msg){return msg.trim();});
+
+            messages.forEach(function(msg){
+                handleMessage(item, msg);
+            })
+        }
 
         reply({success: true});
     }
