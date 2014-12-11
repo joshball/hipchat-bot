@@ -30,10 +30,44 @@ exports.getInfo = {
 
 // Change profile properties
 
+var WxCommand = function(splitMsg){
+    this.cmd = splitMsg[0]; // should be 'wx'
+
+    //if(splitMsg.length == 2){
+    //    throw new Error('Invalid command: ' + msg);
+    //}
+
+    // LOCATION: zip|airport|ip|
+    // !bot wx set LOCATION     - set your location for the bot
+    // !bot wx LOCATION         - get wx for location
+    // !box wx
+    switch(splitMsg[1]){
+        case 'ip':
+            this.cmd = 'ip';
+            break;
+        case 'ip':
+            this.cmd = 'ip';
+            break;
+    }
+
+};
+
+var parseMessage = function(msg){
+    var split = msg.trim().split(' ');
+    if(split.length < 1){
+        throw new Error('Invalid command: ' + msg);
+    }
+    var name = split[0];
+    if(name === 'wx'){
+
+    }
+}
+var getCommand = function(message){
+
+}
 
 var handleMessage = function(item, message){
-    //if(message === 'wx') {
-    //
+    if(message === 'wx') {
         return LostCreekWeather.current.ip()
             .then(LostCreekWeather.current.showString)
             .then(function(msgString){
@@ -61,8 +95,7 @@ var handleMessage = function(item, message){
             .then(function(r){
                 console.log('ALL DONE', r);
             });
-
-    //}
+    }
 };
 
 exports.post = {
